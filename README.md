@@ -8,8 +8,10 @@ This is to provide [Microsoft Power Platform](http://powerplatform.microsoft.com
 The elements in the green rectangle is the scope of this project.
 
 <div>
-  <a href="https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/assets/architecture.png" title="high level architecture and scope of this project"><img src="./assets/architecture.png" alt="high level architecture and scope of this project" width="800"></a>
+  <a href="https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/assets/architecture.png" title="high level architecture and scope of this project"><img src="./assets/architecture.png" alt="high level architecture and scope of this project" width="900"></a>
 </div>
+
+![high level architecture and scope of this project](./assets/architecture.png)
 
 * **[Azure Functions](https://azure.microsoft.com/services/functions/?WT.mc_id=dotnet-58531-juyoo) Proxy**: It works as a facade to NHN Notification Services ([SMS/MMS](https://www.toast.com/kr/service/notification/sms) and [KakaoTalk messages](https://www.toast.com/kr/service/notification/kakaotalk-bizmessage)) to handle requests.
 * **[Azure API Management](https://azure.microsoft.com/services/api-management/?WT.mc_id=dotnet-58531-juyoo)**: It aggregates all the requests from the sender and the responses from the NHN Notification Services ([SMS/MMS](https://www.toast.com/kr/service/notification/sms) and [KakaoTalk messages](https://www.toast.com/kr/service/notification/kakaotalk-bizmessage)).
