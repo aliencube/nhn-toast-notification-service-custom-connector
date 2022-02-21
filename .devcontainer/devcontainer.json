@@ -26,7 +26,10 @@
     "files.watcherExclude": {
       "**/target/**": true
     },
-    "terminal.integrated.profile.linux": "/usr/bin/zsh",
+    "terminal.integrated.profile.linux": "zsh",
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "markdownlint.customRules": [],
+    "markdown-preview-github-styles.colorTheme": "light"
   },
   "remoteUser": "codespace",
   "overrideCommand": false,

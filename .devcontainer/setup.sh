@@ -29,3 +29,18 @@ sudo apt-get install -y azure-functions-core-tools-4
 
 ## Enable local HTTPS for .NET
 dotnet dev-certs https --trust
+
+## Install oh-my-zsh
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+git clone https://github.com/zsh-users/zsh-completions.git $HOME/.oh-my-zsh/custom/plugins/zsh-completions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+git clone https://github.com/romkatv/powerlevel10k.git "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" --depth=1
+ln -s "$HOME/.oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme"
+
+# cp /workspaces/$RepositoryName/settings/.zshrc ~/.zshrc
+# cp /workspaces/$RepositoryName/settings/.p10k.zsh ~/.p10k.zsh
+
+# . ~/.zshrc
