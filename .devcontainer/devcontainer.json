@@ -44,6 +44,7 @@
   "extensions": [
     "bierner.github-markdown-preview",
     "bierner.markdown-mermaid",
+    "GitHub.copilot",
     "GitHub.vscode-pull-request-github",
     "cschleiden.vscode-github-actions",
     "DavidAnson.vscode-markdownlint",
