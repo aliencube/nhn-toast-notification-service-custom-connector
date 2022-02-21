@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+
+    "OpenApi__Version": "v3",
+    "OpenApi__DocVersion": "v3.0",
+
+    "Toast__HostName": "https://api-sms.cloud.toast.com/",
+    "Toast__BaseUrl": "sms/",
+    "Toast__ApiVersion": "v3.0"
+  }
+}
