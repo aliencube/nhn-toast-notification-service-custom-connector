@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Extensions;
@@ -14,11 +15,11 @@ namespace NhnToast.Sms.Sender.Validators
             var instance = await headers.ConfigureAwait(false);
             if (instance.AppKey.IsNullOrWhiteSpace())
             {
-                throw new RequestHeaderNotValidException("Header not valid");
+                throw new RequestHeaderNotValidException("Not Found") { StatusCode = HttpStatusCode.NotFound };
             }
             if (instance.SecretKey.IsNullOrWhiteSpace())
             {
-                throw new RequestHeaderNotValidException("Header not valid");
+                throw new RequestHeaderNotValidException("Unauthorized") { StatusCode = HttpStatusCode.Unauthorized };
             }
 
             return instance;

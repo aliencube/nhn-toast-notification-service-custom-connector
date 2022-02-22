@@ -93,3 +93,33 @@ jobs:
           -g ${{ env.RESOURCE_GROUP_NAME }} `
           -n ${{ env.FUNCTION_APP_NAME }} `
           --settings ${{ secrets.functionapp_app_settings }}
+
+    - name: Update FunctionApp access key in APIM
+      shell: pwsh
+      run: |
+        $functionkey = az functionapp keys list `
+          -g ${{ env.RESOURCE_GROUP_NAME }} `
+          -n ${{ env.FUNCTION_APP_NAME }} `
+          --query "functionKeys.default" -o tsv
+
+        $nv = az apim nv show `
+          -g ${{ env.RESOURCE_GROUP_NAME }} `
+          -n ${{ env.FUNCTION_APP_NAME }} `
+          --named-value-id x_functions_key
+
+        if ($nv -eq $null) {
+          $nv = az apim nv create `
+            -g ${{ env.RESOURCE_GROUP_NAME }} `
+            -n ${{ env.FUNCTION_APP_NAME }} `
+            --named-value-id x_functions_key `
+            --display-name X_FUNCTIONS_KEY `
+            --secret true `
+            --value $functionkey
+        } else {
+          $nv = az apim nv update `
+            -g ${{ env.RESOURCE_GROUP_NAME }} `
+            -n ${{ env.FUNCTION_APP_NAME }} `
+            --named-value-id x_functions_key `
+            --secret true `
+            --value $functionkey
+        }
