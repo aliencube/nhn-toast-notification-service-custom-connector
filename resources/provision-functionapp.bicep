@@ -1,0 +1,182 @@
+param name string
+param shortName string = ''
+param suffix string = ''
+param location string = ''
+param locationCode string = ''
+@allowed([
+    'dev'
+    'test'
+    'prod'
+])
+param env string = 'dev'
+
+// Storage
+param storageAccountToProvision bool = false
+@allowed([
+    'Standard_LRS'
+    'Standard_ZRS'    
+    'Standard_GRS'
+    'Standard_GZRS'
+    'Standard_RAGRS'
+    'Standard_RAGZRS'
+    'Premium_LRS'
+    'Premium_ZRS'
+])
+param storageAccountSku string = 'Standard_LRS'
+param storageAccountBlobContainers array = []
+param storageAccountTables array = []
+
+// Log Analytics Workspace
+param workspaceToProvision bool = false
+@allowed([
+    'Free'
+    'Standard'
+    'Premium'
+    'Standalone'
+    'LACluster'
+    'PerGB2018'
+    'PerNode'
+    'CapacityReservation'
+])
+param workspaceSku string = 'PerGB2018'
+
+// Application Insights
+param appInsightsToProvision bool = false
+@allowed([
+    'web'
+    'other'
+])
+param appInsightsType string = 'web'
+
+@allowed([
+    'ApplicationInsights'
+    'ApplicationInsightsWithDiagnosticSettings'
+    'LogAnalytics'
+])
+param appInsightsIngestionMode string = 'LogAnalytics'
+
+// Consumption Plan
+param consumptionPlanToProvision bool = false
+param consumptionPlanIsLinux bool = false
+
+// Function App
+param functionAppToProvision bool = false
+@allowed([
+    'Development'
+    'Staging'
+    'Production'
+])
+param functionEnvironment string = 'Production'
+@allowed([
+    'v3'
+    'v4'
+])
+param functionExtensionVersion string = 'v4'
+@allowed([
+    'dotnet'
+    'dotnet-isolated'
+    'java'
+    'node'
+    'python'
+    'poweshell'
+])
+param functionWorkerRuntime string = 'dotnet'
+@allowed([
+    // dotnet / dotnet-isolated
+    'v6.0'
+    // java
+    'v8'
+    'v11'
+    // node.js
+    'v12'
+    'v14'
+    'v16'
+    // python
+    'v3.7'
+    'v3.8'
+    'v3.9'
+    // powershell
+    'v7'
+])
+param functionWorkerVersion string = 'v6.0'
+
+var locationResolved = location == '' ? resourceGroup().location : location
+var locationCodeMap = {
+    koreacentral: 'krc'
+    'Korea Central': 'krc'
+    westus2: 'wus2'
+    'West US 2': 'wus2'
+}
+var locationCodeResolved = locationCode == '' ? locationCodeMap[locationResolved] : locationCode
+
+module st './storageAccount.bicep' = if (storageAccountToProvision) {
+    name: 'StorageAccount'
+    params: {
+        name: shortName
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        storageAccountSku: storageAccountSku
+        storageAccountBlobContainers: storageAccountBlobContainers
+        storageAccountTables: storageAccountTables
+    }
+}
+
+module wrkspc './logAnalyticsWorkspace.bicep' = if (workspaceToProvision) {
+    name: 'LogAnalyticsWorkspace'
+    params: {
+        name: name
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        workspaceSku: workspaceSku
+    }
+}
+
+module appins './appInsights.bicep' = if (appInsightsToProvision) {
+    name: 'ApplicationInsights'
+    params: {
+        name: name
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        appInsightsType: appInsightsType
+        appInsightsIngestionMode: appInsightsIngestionMode
+        workspaceId: wrkspc.outputs.id
+    }
+}
+
+module csplan './consumptionPlan.bicep' = if (consumptionPlanToProvision) {
+    name: 'ConsumptionPlan'
+    params: {
+        name: name
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        consumptionPlanIsLinux: consumptionPlanIsLinux
+    }
+}
+
+module fncapp './functionApp.bicep' = if (functionAppToProvision) {
+    name: 'FunctionApp'
+    params: {
+        name: name
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        storageAccountId: st.outputs.id
+        storageAccountName: st.outputs.name
+        appInsightsId: appins.outputs.id
+        consumptionPlanId: csplan.outputs.id
+        functionIsLinux: consumptionPlanIsLinux
+        functionEnvironment: functionEnvironment
+        functionExtensionVersion: functionExtensionVersion
+        functionWorkerRuntime: functionWorkerRuntime
+        functionWorkerVersion: functionWorkerVersion
+    }
+}
