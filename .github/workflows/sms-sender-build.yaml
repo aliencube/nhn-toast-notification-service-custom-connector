@@ -15,16 +15,16 @@ on:
     - 'test/NhnToast.Sms.Sender.Tests/**'
 
 jobs:
-  call_dotnet_build:
-    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/dotnet-build.yaml@main
+  call_functionapp_build:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/functionapp-build.yaml@main
     with:
       job_name: 'SMS Sender API Build'
       environment: 'dev'
       api_app_name: 'NhnToast.Sms.Sender'
 
-  call_dotnet_deploy_dev:
-    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/dotnet-deploy.yaml@main
-    needs: call_dotnet_build
+  call_functionapp_deploy_dev:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/functionapp-deploy.yaml@main
+    needs: call_functionapp_build
     with:
       job_name: 'SMS Sender API to DEV'
       environment: 'dev'
