@@ -18,7 +18,7 @@ namespace NhnToastSms.FunctionApp.Examples
                     Header = new ResponseHeader()
                     {
                         IsSuccessful = true,
-                        Resultcode = 0,
+                        ResultCode = 0,
                         ResultMessage = "SUCCESS"
                     },
                     Body = new ResponseItemBody<FileResponse>()
@@ -48,7 +48,7 @@ namespace NhnToastSms.FunctionApp.Examples
                     Header = new ResponseHeader()
                     {
                         IsSuccessful = false,
-                        Resultcode = -9998,
+                        ResultCode = -9998,
                         ResultMessage = "File upload error"
                     },
                     Body = null,

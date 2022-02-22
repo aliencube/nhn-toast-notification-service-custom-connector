@@ -18,7 +18,7 @@ namespace NhnToastSms.FunctionApp.Examples
                     Header = new ResponseHeader()
                     {
                         IsSuccessful = true,
-                        Resultcode = 0,
+                        ResultCode = 0,
                         ResultMessage = "SUCCESS"
                     },
                     Body = null,
@@ -40,7 +40,7 @@ namespace NhnToastSms.FunctionApp.Examples
                     Header = new ResponseHeader()
                     {
                         IsSuccessful = false,
-                        Resultcode = -2314,
+                        ResultCode = -2314,
                         ResultMessage = "This sendno is invalid."
                     },
                     Body = null,
@@ -54,7 +54,7 @@ namespace NhnToastSms.FunctionApp.Examples
                     Header = new ResponseHeader()
                     {
                         IsSuccessful = false,
-                        Resultcode = -2301,
+                        ResultCode = -2301,
                         ResultMessage = "Already regist send no."
                     },
                     Body = null,

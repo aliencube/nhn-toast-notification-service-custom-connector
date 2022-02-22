@@ -21,17 +21,23 @@ namespace NhnToastSms.FunctionApp.Models
 
         public virtual string Comment { get; set; }
 
+        public virtual string RequestInfo { get; set; }
+
         public virtual List<int> FileIds { get; set; }
 
         public virtual AuthorizationRequestStatusType Status { get; set; }
 
-        [JsonConverter(typeof(ToastDateTimeConverter))]
-        public virtual DateTimeOffset CreateDate { get; set; }
+        public virtual string StatusName { get; set; }
 
         [JsonConverter(typeof(ToastDateTimeConverter))]
-        public virtual DateTimeOffset UpdateDate { get; set; }
+        public virtual DateTimeOffset? CreateDate { get; set; }
 
         [JsonConverter(typeof(ToastDateTimeConverter))]
-        public virtual DateTimeOffset ConfirmDate { get; set; }
+        public virtual DateTimeOffset? UpdateDate { get; set; }
+
+        [JsonConverter(typeof(ToastDateTimeConverter))]
+        public virtual DateTimeOffset? ConfirmDate { get; set; }
+
+        public virtual List<object> AttachFileList { get; set; }
     }
 }

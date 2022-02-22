@@ -27,12 +27,12 @@ namespace NhnToastSms.FunctionApp.Models
         public virtual string BlockedReason { get; set; }
 
         [JsonConverter(typeof(ToastDateTimeConverter))]
-        public virtual DateTimeOffset CreateDate { get; set; }
+        public virtual DateTimeOffset? CreateDate { get; set; }
 
         public virtual string CreateUser { get; set; }
 
         [JsonConverter(typeof(ToastDateTimeConverter))]
-        public virtual DateTimeOffset UpdateDate { get; set; }
+        public virtual DateTimeOffset? UpdateDate { get; set; }
 
         public virtual string UpdateUser { get; set; }
     }
