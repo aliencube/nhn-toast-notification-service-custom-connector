@@ -39,10 +39,10 @@ jobs:
       with:
         dotnet-version: '6.x'
 
-    - name: Initialise CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: 'csharp'
+    # - name: Initialise CodeQL
+    #   uses: github/codeql-action/init@v1
+    #   with:
+    #     languages: 'csharp'
 
     - name: Restore NuGet packages
       shell: bash
@@ -59,8 +59,8 @@ jobs:
       run: |
         dotnet test . -c Release
 
-    - name: Perform CodeQL analysis
-      uses: github/codeql-action/analyze@v1
+    # - name: Perform CodeQL analysis
+    #   uses: github/codeql-action/analyze@v1
 
     - name: Create FunctionApp artifact
       shell: bash
