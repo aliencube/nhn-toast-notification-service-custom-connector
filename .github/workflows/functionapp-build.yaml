@@ -1,0 +1,76 @@
+name: 'Function App Build and Test'
+
+on:
+  workflow_call:
+    inputs:
+      job_name:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+      api_app_name:
+        type: string
+        required: true
+
+jobs:
+  build_test_analyse:
+    name: ${{ inputs.job_name }}
+
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "FUNCTION_APP_PATH=${{ github.workspace }}/src/${{ inputs.api_app_name }}" >> $GITHUB_ENV
+
+    # - name: Check environment variables
+    #   shell: bash
+    #   run: |
+    #     echo $FUNCTION_APP_PATH
+
+    - name: Checkout the repo
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.x'
+
+    - name: Initialise CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: 'csharp'
+
+    - name: Restore NuGet packages
+      shell: bash
+      run: |
+        dotnet restore .
+
+    - name: Build solution
+      shell: bash
+      run: |
+        dotnet build . -c Release
+
+    - name: Test solution
+      shell: bash
+      run: |
+        dotnet test . -c Release
+
+    - name: Perform CodeQL analysis
+      uses: github/codeql-action/analyze@v1
+
+    - name: Create FunctionApp artifact
+      shell: bash
+      run: |
+        pushd "${{ env.FUNCTION_APP_PATH }}"
+        dotnet publish . -c Release -o published
+        popd
+
+    - name: Upload FunctionApp artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ inputs.api_app_name }}
+        path: ${{ env.FUNCTION_APP_PATH }}/published

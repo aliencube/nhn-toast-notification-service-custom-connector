@@ -1,0 +1,37 @@
+name: 'SMS Sender API'
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'src/NhnToast.Sms.Sender/**'
+    - 'test/NhnToast.Sms.Sender.Tests/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'src/NhnToast.Sms.Sender/**'
+    - 'test/NhnToast.Sms.Sender.Tests/**'
+
+jobs:
+  call_dotnet_build:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/dotnet-build.yaml@main
+    with:
+      job_name: 'SMS Sender API Build'
+      environment: 'dev'
+      api_app_name: 'NhnToast.Sms.Sender'
+
+  call_dotnet_deploy_dev:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/dotnet-deploy.yaml@main
+    needs: call_dotnet_build
+    with:
+      job_name: 'SMS Sender API to DEV'
+      environment: 'dev'
+      api_name: 'sms-sender'
+      api_app_name: 'NhnToast.Sms.Sender'
+      location_code: 'krc'
+    secrets:
+      azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      resource_group_name: '${{ secrets.RESOURCE_GROUP_NAME }}'
+      resource_name: '${{ secrets.RESOURCE_NAME }}'
