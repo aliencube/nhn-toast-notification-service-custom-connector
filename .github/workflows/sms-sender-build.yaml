@@ -35,3 +35,4 @@ jobs:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
       resource_group_name: '${{ secrets.RESOURCE_GROUP_NAME }}'
       resource_name: '${{ secrets.RESOURCE_NAME }}'
+      functionapp_app_settings: '${{ secrets.FUNCTIONAPP_APP_SETTINGS_SMS_SENDER }}'

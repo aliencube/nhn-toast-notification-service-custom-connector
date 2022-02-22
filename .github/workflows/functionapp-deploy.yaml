@@ -25,6 +25,8 @@ on:
         required: true
       resource_name:
         required: true
+      functionapp_app_settings:
+        required: true
 
 jobs:
   build_test_analyse_deploy:
@@ -83,3 +85,11 @@ jobs:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
         appName: ${{ env.FUNCTION_APP_NAME }}
         reset: true
+    
+    - name: Update FunctionApp app settings
+      shell: pwsh
+      run: |
+        $appsettings = az functionapp config appsettings set `
+          -g ${{ env.RESOURCE_GROUP_NAME }} `
+          -n ${{ env.FUNCTION_APP_NAME }} `
+          --settings ${{ secrets.functionapp_app_settings }}
