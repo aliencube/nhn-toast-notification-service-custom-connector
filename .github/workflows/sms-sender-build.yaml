@@ -30,6 +30,8 @@ jobs:
       environment: 'dev'
       api_name: 'sms-sender'
       api_app_name: 'NhnToast.Sms.Sender'
+      nv_id: 'x_functions_key_sms_sender'
+      nv_name: 'X_FUNCTIONS_KEY_SMS_SENDER'
       location_code: 'krc'
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}

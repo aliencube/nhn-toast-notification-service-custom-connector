@@ -15,6 +15,12 @@ on:
       api_app_name:
         type: string
         required: true
+      nv_id:
+        type: string
+        required: true
+      nv_name:
+        type: string
+        required: true
       location_code:
         type: string
         required: true
@@ -40,15 +46,17 @@ jobs:
       shell: bash
       run: |
         echo "RESOURCE_GROUP_NAME=rg-${{ secrets.resource_group_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
-        echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}-${{ inputs.api_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
         echo "FUNCTION_APP_PATH=${{ github.workspace }}/src/${{ inputs.api_app_name }}" >> $GITHUB_ENV
+        echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}-${{ inputs.api_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
+        echo "APIM_NAME=apim-${{ secrets.resource_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
 
     # - name: Check environment variables
     #   shell: bash
     #   run: |
     #     echo $RESOURCE_GROUP_NAME
-    #     echo $FUNCTION_APP_NAME
     #     echo $FUNCTION_APP_PATH
+    #     echo $FUNCTION_APP_NAME
+    #     echo $APIM_NAME
 
     - name: Download FunctionApp artifact
       uses: actions/download-artifact@v2
@@ -104,22 +112,22 @@ jobs:
 
         $nv = az apim nv show `
           -g ${{ env.RESOURCE_GROUP_NAME }} `
-          -n ${{ env.FUNCTION_APP_NAME }} `
-          --named-value-id x_functions_key
+          -n ${{ env.APIM_NAME }} `
+          --named-value-id ${{ inputs.nv_id }}
 
         if ($nv -eq $null) {
           $nv = az apim nv create `
             -g ${{ env.RESOURCE_GROUP_NAME }} `
-            -n ${{ env.FUNCTION_APP_NAME }} `
-            --named-value-id x_functions_key `
-            --display-name X_FUNCTIONS_KEY `
+            -n ${{ env.APIM_NAME }} `
+            --named-value-id ${{ inputs.nv_id }} `
+            --display-name ${{ inputs.nv_name }} `
             --secret true `
             --value $functionkey
         } else {
           $nv = az apim nv update `
             -g ${{ env.RESOURCE_GROUP_NAME }} `
-            -n ${{ env.FUNCTION_APP_NAME }} `
-            --named-value-id x_functions_key `
+            -n ${{ env.APIM_NAME }} `
+            --named-value-id ${{ inputs.nv_id }} `
             --secret true `
             --value $functionkey
         }
