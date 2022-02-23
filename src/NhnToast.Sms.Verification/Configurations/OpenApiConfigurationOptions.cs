@@ -11,8 +11,8 @@ namespace NhnToast.Sms.Verification.Configurations
         public override OpenApiInfo Info { get; set; } = new OpenApiInfo()
         {
             Version = GetOpenApiDocVersion(),
-            Title = "NHN Toast Notification Service - SMS",
-            Description = "This service is the system that sends SMS and MMS, manages message templates and message histories.",
+            Title = "NHN Toast Notification Service / SMS / Verification",
+            Description = "This is the sender verification service API for SMS and MMS.",
             TermsOfService = new Uri("https://www.toast.com/kr/terms/terms-service"),
             Contact = new OpenApiContact()
             {
