@@ -1,6 +1,6 @@
 {
-  "azureFunctions.deploySubpath": "src/NhnToast.Sms.Sender/bin/Release/net6.0/publish",
-  "azureFunctions.projectSubpath": "src/NhnToast.Sms.Sender",
+  "azureFunctions.deploySubpath": "src/NhnToast.Sms.Verification/bin/Release/net6.0/publish",
+  "azureFunctions.projectSubpath": "src/NhnToast.Sms.Verification",
   "azureFunctions.projectLanguage": "C#",
   "azureFunctions.projectRuntime": "~4",
   "azureFunctions.preDeployTask": "publish (functions)",

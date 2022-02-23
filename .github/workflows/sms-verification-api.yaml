@@ -1,0 +1,40 @@
+name: 'SMS Verification API'
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'src/NhnToast.Sms.Verification/**'
+    - 'test/NhnToast.Sms.Verification.Tests/**'
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'src/NhnToast.Sms.Verification/**'
+    - 'test/NhnToast.Sms.Verification.Tests/**'
+
+jobs:
+  call_functionapp_build:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/functionapp-build.yaml@main
+    with:
+      job_name: 'SMS Verification API Build'
+      environment: 'dev'
+      api_app_name: 'NhnToast.Sms.Verification'
+
+  call_functionapp_deploy_dev:
+    uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/functionapp-deploy.yaml@main
+    needs: call_functionapp_build
+    with:
+      job_name: 'SMS Verification API to DEV'
+      environment: 'dev'
+      api_name: 'sms-verify'
+      api_app_name: 'NhnToast.Sms.Verification'
+      nv_id: 'x_functions_key_sms_verification'
+      nv_name: 'X_FUNCTIONS_KEY_SMS_VERIFICATION'
+      location_code: 'krc'
+    secrets:
+      azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      resource_group_name: '${{ secrets.RESOURCE_GROUP_NAME }}'
+      resource_name: '${{ secrets.RESOURCE_NAME }}'
+      functionapp_app_settings: '${{ secrets.FUNCTIONAPP_APP_SETTINGS_SMS_VERIFICATION }}'

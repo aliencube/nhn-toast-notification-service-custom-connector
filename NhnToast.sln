@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8B9060CF-01EA-4C98-A50E-1890C774D54B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NhnToast.Sms.Sender", "src\NhnToast.Sms.Sender\NhnToast.Sms.Sender.csproj", "{7EFE813F-4654-4C27-B1A3-03557F8A65D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NhnToast.Sms.Verification", "src\NhnToast.Sms.Verification\NhnToast.Sms.Verification.csproj", "{7EFE813F-4654-4C27-B1A3-03557F8A65D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
