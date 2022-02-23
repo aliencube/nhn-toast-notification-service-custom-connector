@@ -76,11 +76,11 @@ resource apim 'Microsoft.ApiManagement/service@2021-08-01' = {
 resource apimNamedValue 'Microsoft.ApiManagement/service/namedValues@2021-08-01' = {
     name: '${apim.name}/resource_name'
     properties: {
-      displayName: 'RESOURCE_NAME'
-      secret: false
-      value: apim.name
+        displayName: 'RESOURCE_NAME'
+        secret: false
+        value: apim.name
     }
-  }
+}
 
 resource apimlogger 'Microsoft.ApiManagement/service/loggers@2021-08-01' = {
     name: '${apim.name}/${appInsights.name}'
