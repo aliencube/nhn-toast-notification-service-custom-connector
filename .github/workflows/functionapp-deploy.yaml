@@ -84,6 +84,12 @@ jobs:
         name: ${{ inputs.api_app_name }}
         path: ${{ env.FUNCTION_APP_PATH }}
 
+    - name: Download bicep artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: resources
+        path: ${{ env.RESOURCE_PATH }}
+
     - name: Login to Azure
       uses: Azure/login@v1
       with:
@@ -156,6 +162,8 @@ jobs:
       shell: pwsh
       run: |
         pushd ${{ env.RESOURCE_PATH }}
+
+        dir
 
         ./Provision-ApiManagementApi.ps1 `
           -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `

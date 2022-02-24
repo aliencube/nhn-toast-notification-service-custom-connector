@@ -25,11 +25,13 @@ jobs:
       shell: bash
       run: |
         echo "FUNCTION_APP_PATH=${{ github.workspace }}/src/${{ inputs.api_app_name }}" >> $GITHUB_ENV
+        echo "RESOURCE_PATH=${{ github.workspace }}/resources" >> $GITHUB_ENV
 
     # - name: Check environment variables
     #   shell: bash
     #   run: |
     #     echo $FUNCTION_APP_PATH
+    #     echo $RESOURCE_PATH
 
     - name: Checkout the repo
       uses: actions/checkout@v2
@@ -74,3 +76,9 @@ jobs:
       with:
         name: ${{ inputs.api_app_name }}
         path: ${{ env.FUNCTION_APP_PATH }}/published
+
+    - name: Upload bicep artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: resources
+        path: ${{ env.RESOURCE_PATH }}
