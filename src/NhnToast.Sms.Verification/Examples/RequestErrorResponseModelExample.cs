@@ -14,7 +14,17 @@ namespace NhnToast.Sms.Verification.Examples
         {
             this.Examples.Add(
                 OpenApiExampleResolver.Resolve("badrequest",
-                new RequestErrorResponseModel(new RequestHeaderNotValidException("Header not valid")),
+                new RequestErrorResponseModel(new RequestHeaderNotValidException("Header Not Valid")),
+                namingStrategy)); ;
+
+            this.Examples.Add(
+                OpenApiExampleResolver.Resolve("notfound",
+                new RequestErrorResponseModel(new RequestHeaderNotValidException("Not Found")),
+                namingStrategy)); ;
+
+            this.Examples.Add(
+                OpenApiExampleResolver.Resolve("unauthorized",
+                new RequestErrorResponseModel(new RequestHeaderNotValidException("Unauthorized")),
                 namingStrategy)); ;
 
             return this;

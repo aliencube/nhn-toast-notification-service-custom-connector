@@ -21,6 +21,7 @@ using NhnToast.Sms.Verification.Builders;
 using NhnToast.Sms.Verification.Configurations;
 using NhnToast.Sms.Verification.Enums;
 using NhnToast.Sms.Verification.Examples;
+using NhnToast.Sms.Verification.Exceptions;
 using NhnToast.Sms.Verification.Models;
 using NhnToast.Sms.Verification.Validators;
 
@@ -41,15 +42,16 @@ namespace NhnToast.Sms.Verification.Triggers
 
         [FunctionName(nameof(SenderHttpTrigger.UploadDocumentForAuthorization))]
         [OpenApiOperation(operationId: "Sender.Authorization.UploadDocument", tags: new[] { "sender" }, Summary = "Uploads a document for authorization", Description = "This uploads a document to get the sender's phone number authorized", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiSecurity(schemeName: "function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header, Description = "Function app access key")]
         [OpenApiSecurity(schemeName: "app_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-app-key", In = OpenApiSecurityLocationType.Header, Description = "Unique application key")]
         [OpenApiSecurity(schemeName: "secret_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-secret-key", In = OpenApiSecurityLocationType.Header, Description = "Unique secret key")]
         [OpenApiRequestBody(contentType: ContentTypes.MultipartFormData, bodyType: typeof(UploadDocumentRequestModel), Required = true, Description = "Document for authorization")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentTypes.ApplicationJson, bodyType: typeof(UploadDocumentResponseModel), Example = typeof(UploadDocumentResponseSuccessExample), Summary = "Represents the successful operation", Description = "This represents the successful operation")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestErrorResponseModel), Example = typeof(RequestErrorResponseModelExample), Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentTypes.ApplicationJson, bodyType: typeof(UploadDocumentResponseModel), Example = typeof(UploadDocumentResponseFailureExample), Summary = "Represents the document upload failure", Description = "This represents the document upload failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Represents the unauthorised request failure", Description = "This represents the unauthorised request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "Represents the not found request failure", Description = "This represents the not found request failure")]
         public async Task<IActionResult> UploadDocumentForAuthorization(
-            [HttpTrigger(AuthorizationLevel.Function, HttpVerbs.POST, Route = "upload-document")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.POST, Route = "upload-document")] HttpRequest req)
         {
             var headers = default(RequestHeaderModel);
             try
@@ -58,8 +60,10 @@ namespace NhnToast.Sms.Verification.Triggers
             }
             catch (Exception ex)
             {
-                var error = new RequestErrorResponseModel(ex);
-                return new BadRequestObjectResult(error);
+                // var error = new RequestErrorResponseModel(ex);
+                // return new BadRequestObjectResult(error);
+                var statusCode = ex is ToastException e ? (int)e.StatusCode : (int)HttpStatusCode.BadRequest;
+                return new StatusCodeResult(statusCode);
             }
 
             var content = await req.ToMultipartFormDataContent().ConfigureAwait(false);
@@ -90,15 +94,16 @@ namespace NhnToast.Sms.Verification.Triggers
 
         [FunctionName(nameof(SenderHttpTrigger.RequestForAuthorization))]
         [OpenApiOperation(operationId: "Sender.Authorization.Request", tags: new[] { "sender" }, Summary = "Requests authorization", Description = "This requests authorization for the sender's phone numbers", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiSecurity(schemeName: "function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header, Description = "Function app access key")]
         [OpenApiSecurity(schemeName: "app_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-app-key", In = OpenApiSecurityLocationType.Header, Description = "Unique application key")]
         [OpenApiSecurity(schemeName: "secret_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-secret-key", In = OpenApiSecurityLocationType.Header, Description = "Unique secret key")]
         [OpenApiRequestBody(contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestAuthorizationRequestModel), Required = true, Description = "Sender's phone numbers for authorization")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestAuthorizationResponseModel), Example = typeof(RequestAuthorizationResponseModelSuccessExample), Summary = "Represents the successful operation", Description = "This represents the successful operation")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestErrorResponseModel), Example = typeof(RequestErrorResponseModelExample), Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestAuthorizationResponseModel), Example = typeof(RequestAuthorizationResponseModelFailureExample), Summary = "Represents the request failure", Description = "This represents the request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Represents the unauthorised request failure", Description = "This represents the unauthorised request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "Represents the not found request failure", Description = "This represents the not found request failure")]
         public async Task<IActionResult> RequestForAuthorization(
-            [HttpTrigger(AuthorizationLevel.Function, HttpVerbs.POST, Route = "request")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.POST, Route = "request")] HttpRequest req)
         {
             var headers = default(RequestHeaderModel);
             try
@@ -107,8 +112,10 @@ namespace NhnToast.Sms.Verification.Triggers
             }
             catch (Exception ex)
             {
-                var error = new RequestErrorResponseModel(ex);
-                return new BadRequestObjectResult(error);
+                // var error = new RequestErrorResponseModel(ex);
+                // return new BadRequestObjectResult(error);
+                var statusCode = ex is ToastException e ? (int)e.StatusCode : (int)HttpStatusCode.BadRequest;
+                return new StatusCodeResult(statusCode);
             }
 
             var payload = await req.To<RequestAuthorizationRequestModel>(SourceFrom.Body).ConfigureAwait(false);
@@ -139,7 +146,6 @@ namespace NhnToast.Sms.Verification.Triggers
 
         [FunctionName(nameof(SenderHttpTrigger.GetAuthorizationStatus))]
         [OpenApiOperation(operationId: "Sender.Authorization.Status", tags: new[] { "sender" }, Summary = "Gets authorization status", Description = "This gets authorization status for the sender's phone numbers", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiSecurity(schemeName: "function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header, Description = "Function app access key")]
         [OpenApiSecurity(schemeName: "app_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-app-key", In = OpenApiSecurityLocationType.Header, Description = "Unique application key")]
         [OpenApiSecurity(schemeName: "secret_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-secret-key", In = OpenApiSecurityLocationType.Header, Description = "Unique secret key")]
         [OpenApiParameter(name: "sendNo", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The sender's phone number requested")]
@@ -147,10 +153,12 @@ namespace NhnToast.Sms.Verification.Triggers
         [OpenApiParameter(name: "pageNum", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Page number (default to 1)")]
         [OpenApiParameter(name: "pageSize", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Number of items in a page (default to 15)")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentTypes.ApplicationJson, bodyType: typeof(GetAuthorizationStatusResponseModel), Example = typeof(GetAuthorizationStatusResponseModelSuccessExample), Summary = "Represents the successful operation", Description = "This represents the successful operation")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestErrorResponseModel), Example = typeof(RequestErrorResponseModelExample), Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentTypes.ApplicationJson, bodyType: typeof(GetAuthorizationStatusResponseModel), Example = typeof(GetAuthorizationStatusResponseModelFailureExample), Summary = "Represents the request failure", Description = "This represents the request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Represents the unauthorised request failure", Description = "This represents the unauthorised request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "Represents the not found request failure", Description = "This represents the not found request failure")]
         public async Task<IActionResult> GetAuthorizationStatus(
-            [HttpTrigger(AuthorizationLevel.Function, HttpVerbs.GET, Route = "request")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.GET, Route = "request")] HttpRequest req)
         {
             var headers = default(RequestHeaderModel);
             try
@@ -159,8 +167,10 @@ namespace NhnToast.Sms.Verification.Triggers
             }
             catch (Exception ex)
             {
-                var error = new RequestErrorResponseModel(ex);
-                return new BadRequestObjectResult(error);
+                // var error = new RequestErrorResponseModel(ex);
+                // return new BadRequestObjectResult(error);
+                var statusCode = ex is ToastException e ? (int)e.StatusCode : (int)HttpStatusCode.BadRequest;
+                return new StatusCodeResult(statusCode);
             }
 
             var queries = await req.To<GetAuthorizationStatusRequestModel>(SourceFrom.Query).ConfigureAwait(false);
@@ -192,7 +202,6 @@ namespace NhnToast.Sms.Verification.Triggers
 
         [FunctionName(nameof(SenderHttpTrigger.GetSenderNumbers))]
         [OpenApiOperation(operationId: "Sender.GetNumbers", tags: new[] { "sender" }, Summary = "Gets the sender's phone numbers", Description = "This gets the sender's phone numbers", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiSecurity(schemeName: "function_key", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header, Description = "Function app access key")]
         [OpenApiSecurity(schemeName: "app_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-app-key", In = OpenApiSecurityLocationType.Header, Description = "Unique application key")]
         [OpenApiSecurity(schemeName: "secret_key", schemeType: SecuritySchemeType.ApiKey, Name = "x-secret-key", In = OpenApiSecurityLocationType.Header, Description = "Unique secret key")]
         [OpenApiParameter(name: "sendNo", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "The sender's phone number requested")]
@@ -201,10 +210,12 @@ namespace NhnToast.Sms.Verification.Triggers
         [OpenApiParameter(name: "pageNum", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Page number (default to 1)")]
         [OpenApiParameter(name: "pageSize", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Number of items in a page (default to 15)")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: ContentTypes.ApplicationJson, bodyType: typeof(GetSenderNumbersResponseModel), Example = typeof(GetSenderNumbersResponseModelSuccessExample), Summary = "Represents the successful operation", Description = "This represents the successful operation")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: ContentTypes.ApplicationJson, bodyType: typeof(RequestErrorResponseModel), Example = typeof(RequestErrorResponseModelExample), Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: ContentTypes.ApplicationJson, bodyType: typeof(GetSenderNumbersResponseModel), Example = typeof(GetSenderNumbersResponseModelFailureExample), Summary = "Represents the request failure", Description = "This represents the request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Represents the invalid request failure", Description = "This represents the invalid request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Represents the unauthorised request failure", Description = "This represents the unauthorised request failure")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "Represents the not found request failure", Description = "This represents the not found request failure")]
         public async Task<IActionResult> GetSenderNumbers(
-            [HttpTrigger(AuthorizationLevel.Function, HttpVerbs.GET, Route = "numbers")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.GET, Route = "numbers")] HttpRequest req)
         {
             var headers = default(RequestHeaderModel);
             try
@@ -213,8 +224,10 @@ namespace NhnToast.Sms.Verification.Triggers
             }
             catch (Exception ex)
             {
-                var error = new RequestErrorResponseModel(ex);
-                return new BadRequestObjectResult(error);
+                // var error = new RequestErrorResponseModel(ex);
+                // return new BadRequestObjectResult(error);
+                var statusCode = ex is ToastException e ? (int)e.StatusCode : (int)HttpStatusCode.BadRequest;
+                return new StatusCodeResult(statusCode);
             }
 
             var queries = await req.To<GetSenderNumbersRequestModel>(SourceFrom.Query).ConfigureAwait(false);
