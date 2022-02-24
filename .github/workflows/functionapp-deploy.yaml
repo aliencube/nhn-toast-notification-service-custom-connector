@@ -204,7 +204,8 @@ jobs:
     - name: Build and push Docker images to DockerHub
       shell: pwsh
       run: |
-        pushd ${{ env.FUNCTION_APP_PATH }}
+        mv ${{ env.FUNCTION_APP_PATH }}/Dockerfile ./Dockerfile
+        mv ${{ env.FUNCTION_APP_PATH }}/.dockerignore ./.dockerignore
 
         docker build . -t ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
         docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
@@ -217,5 +218,3 @@ jobs:
           docker tag $imageId ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
           docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
         }
-
-        popd
