@@ -163,7 +163,7 @@ jobs:
       run: |
         pushd ${{ env.RESOURCE_PATH }}
 
-        dir
+        $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() == "true" ? $true : $false
 
         ./Provision-ApiManagementApi.ps1 `
           -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `
@@ -175,7 +175,7 @@ jobs:
           -ApiManagementApiDisplayName "${{ inputs.apim_api_display_name }}" `
           -ApiManagementApiDescription "${{ inputs.apim_api_description }}" `
           -ApiManagementApiPath "${{ inputs.apim_api_path }}" `
-          -ApiManagementApiSubscriptionRequired [System.Convert]::ToBoolean("${{ inputs.apim_api_subscription_required }}") `
+          -ApiManagementApiSubscriptionRequired $subscriptionRequired `
           -ApiManagementApiFormat openapi+json-link `
           -ApiManagementApiValue https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json `
           -ApiManagementApiPolicyFormat rawxml-link `
