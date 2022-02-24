@@ -33,6 +33,12 @@ jobs:
       nv_id: 'x_functions_key_sms_verification'
       nv_name: 'X_FUNCTIONS_KEY_SMS_VERIFICATION'
       location_code: 'krc'
+      apim_api_name: 'sms-verification'
+      apim_api_display_name: 'SMS Verification'
+      apim_api_description: 'This is the sender verification service API for SMS and MMS.'
+      apim_api_path: 'sms/verification'
+      apim_api_subscription_required: false
+      apim_api_policy_url: 'https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/resources/apim-api-policy-sms-verification.xml'
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
       resource_group_name: '${{ secrets.RESOURCE_GROUP_NAME }}'

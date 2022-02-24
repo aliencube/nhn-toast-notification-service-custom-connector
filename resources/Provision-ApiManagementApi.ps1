@@ -170,17 +170,10 @@ if ($needHelp -eq $true) {
     Exit 0
 }
 
-# Override resource short name with resource name if resource short name is not specified
-if ($ResourceShortName -eq "") {
-    $ResourceShortName = $ResourceName
-}
-
 # Build parameters
 $params = @{
     groupName = @{ value = $GroupName };
     name = @{ value = $ResourceName };
-    shortName = @{ value = $ResourceShortName };
-    suffix = @{ value = $ResourceNameSuffix };
     location = @{ value = $Location };
     locationCode = @{ value = $LocationCode };
     env = @{ value = $Environment };

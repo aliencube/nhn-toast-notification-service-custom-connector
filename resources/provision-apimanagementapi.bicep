@@ -1,6 +1,6 @@
 param groupName string
 param name string
-param location string = resourceGroup().location
+param location string = ''
 param locationCode string = 'wus2'
 
 @allowed([
@@ -51,16 +51,25 @@ param apiMgmtApiPolicyValue string = '<!--\r\n  IMPORTANT:\r\n  - Policy element
 
 param apiMgmtProductName string = 'default'
 
+var locationResolved = location == '' ? resourceGroup().location : location
+var locationCodeMap = {
+    koreacentral: 'krc'
+    'Korea Central': 'krc'
+    westus2: 'wus2'
+    'West US 2': 'wus2'
+}
+var locationCodeResolved = locationCode == '' ? locationCodeMap[locationResolved] : locationCode
+
 var metadata = {
-    groupName: '{0}-${groupName}-${env}-${locationCode}'
-    longName: '{0}-${name}-${env}-${locationCode}'
-    shortName: '{0}${name}${env}${locationCode}'
+    groupName: '{0}-${groupName}-${env}-${locationCodeResolved}'
+    longName: '{0}-${name}-${env}-${locationCodeResolved}'
+    shortName: '{0}${name}${env}${locationCodeResolved}'
 }
 
 var apiManagement = {
     groupName: format(metadata.groupName, 'apim')
     name: format(metadata.longName, 'apim')
-    location: location
+    location: locationResolved
     type: apiMgmtApiType
     apiName: apiMgmtApiName
     displayName: apiMgmtApiDisplayName
