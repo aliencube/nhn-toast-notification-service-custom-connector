@@ -204,6 +204,7 @@ jobs:
     - name: Build and push Docker images to DockerHub
       shell: pwsh
       run: |
+        mv ${{ env.FUNCTION_APP_PATH }}/README.md ./README.md
         mv ${{ env.FUNCTION_APP_PATH }}/Dockerfile ./Dockerfile
         mv ${{ env.FUNCTION_APP_PATH }}/.dockerignore ./.dockerignore
 
