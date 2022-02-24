@@ -200,7 +200,7 @@ $stringified = $params | ConvertTo-Json -Compress | ConvertTo-Json
 # Provision the resources
 if ($WhatIf -eq $true) {
     Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources as a test ..."
-    az deployment group create -g $ResourceGroupName -n $DeploymentName `
+    $provisioned = az deployment group create -g $ResourceGroupName -n $DeploymentName `
         -f ./provision-apimanagementapi.bicep `
         -p $stringified `
         -w
@@ -208,7 +208,7 @@ if ($WhatIf -eq $true) {
         # -u https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/resources/provision-apimanagementapi.bicep `
 } else {
     Write-Output "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Provisioning resources ..."
-    az deployment group create -g $ResourceGroupName -n $DeploymentName `
+    $provisioned = az deployment group create -g $ResourceGroupName -n $DeploymentName `
         -f ./provision-apimanagementapi.bicep `
         -p $stringified `
         --verbose
