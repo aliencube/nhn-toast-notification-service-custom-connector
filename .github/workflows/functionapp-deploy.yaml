@@ -163,7 +163,7 @@ jobs:
       run: |
         pushd ${{ env.RESOURCE_PATH }}
 
-        $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() == "true" ? $true : $false
+        $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() -eq "true" ? $true : $false
 
         ./Provision-ApiManagementApi.ps1 `
           -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `
