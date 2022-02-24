@@ -172,9 +172,9 @@ jobs:
           -ResourceName ${{ secrets.resource_name }} `
           -Environment ${{ inputs.environment }} `
           -ApiManagementApiName ${{ inputs.apim_api_name }} `
-          -ApiManagementApiDisplayName ${{ inputs.apim_api_display_name }} `
-          -ApiManagementApiDescription ${{ inputs.apim_api_description }} `
-          -ApiManagementApiPath ${{ inputs.apim_api_path }} `
+          -ApiManagementApiDisplayName "${{ inputs.apim_api_display_name }}" `
+          -ApiManagementApiDescription "${{ inputs.apim_api_description }}" `
+          -ApiManagementApiPath "${{ inputs.apim_api_path }}" `
           -ApiManagementApiSubscriptionRequired [System.Convert]::ToBoolean("${{ inputs.apim_api_subscription_required }}") `
           -ApiManagementApiFormat openapi+json-link `
           -ApiManagementApiValue https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json `
