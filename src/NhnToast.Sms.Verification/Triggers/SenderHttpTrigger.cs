@@ -51,7 +51,7 @@ namespace NhnToast.Sms.Verification.Triggers
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Represents the unauthorised request failure", Description = "This represents the unauthorised request failure")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "Represents the not found request failure", Description = "This represents the not found request failure")]
         public async Task<IActionResult> UploadDocumentForAuthorization(
-            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.POST, Route = "upload-documents")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, HttpVerbs.POST, Route = "upload-document")] HttpRequest req)
         {
             var headers = default(RequestHeaderModel);
             try
