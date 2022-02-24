@@ -42,6 +42,9 @@ on:
       apim_api_policy_url:
         type: string
         required: true
+      dockerhub_orgname:
+        type: string
+        required: true
       docker_image_version:
         type: string
         required: true
@@ -75,7 +78,7 @@ jobs:
         echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}-${{ inputs.api_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
         echo "APIM_NAME=apim-${{ secrets.resource_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
         echo "RESOURCE_PATH=${{ github.workspace }}/resources" >> $GITHUB_ENV
-        echo "DOCKER_IMAGE_NAME=${{ secrets.resource_name }}-${{ inputs.api_name }}" >> $GITHUB_ENV
+        echo "DOCKER_IMAGE_NAME=${{ inputs.dockerhub_orgname }}/${{ secrets.resource_name }}-${{ inputs.api_name }}" >> $GITHUB_ENV
 
     # - name: Check environment variables
     #   shell: bash
@@ -203,16 +206,16 @@ jobs:
       run: |
         pushd ${{ env.FUNCTION_APP_PATH }}
 
-        docker build . -t ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
-        docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
+        docker build . -t ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
+        docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
 
         $imageId = docker images | grep ${{ env.DOCKER_IMAGE_NAME }} | head -n 1 | awk '{print $3}'
         if ("${{ inputs.environment }}" -eq "prod") {
-          docker tag $imageId ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:latest
-          docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker tag $imageId ${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker push ${{ env.DOCKER_IMAGE_NAME }}:latest
 
-          docker tag $imageId ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
-          docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
+          docker tag $imageId ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
+          docker push ${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
         }
 
         popd
