@@ -42,6 +42,9 @@ on:
       apim_api_policy_url:
         type: string
         required: true
+      docker_image_version:
+        type: string
+        required: true
     secrets:
       azure_credentials:
         required: true
@@ -50,6 +53,10 @@ on:
       resource_name:
         required: true
       functionapp_app_settings:
+        required: true
+      dockerhub_username:
+        required: true
+      dockerhub_token:
         required: true
 
 jobs:
@@ -64,10 +71,11 @@ jobs:
       shell: bash
       run: |
         echo "RESOURCE_GROUP_NAME=rg-${{ secrets.resource_group_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
-        echo "FUNCTION_APP_PATH=${{ github.workspace }}/src/${{ inputs.api_app_name }}" >> $GITHUB_ENV
+        echo "FUNCTION_APP_PATH=${{ github.workspace }}/published" >> $GITHUB_ENV
         echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}-${{ inputs.api_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
         echo "APIM_NAME=apim-${{ secrets.resource_name }}-${{ inputs.environment }}-${{ inputs.location_code }}" >> $GITHUB_ENV
         echo "RESOURCE_PATH=${{ github.workspace }}/resources" >> $GITHUB_ENV
+        echo "DOCKER_IMAGE_NAME=${{ secrets.resource_name }}-${{ inputs.api_name }}" >> $GITHUB_ENV
 
     # - name: Check environment variables
     #   shell: bash
@@ -77,6 +85,7 @@ jobs:
     #     echo $FUNCTION_APP_NAME
     #     echo $APIM_NAME
     #     echo $RESOURCE_PATH
+    #     echo $DOCKER_IMAGE_NAME
 
     - name: Download FunctionApp artifact
       uses: actions/download-artifact@v2
@@ -180,5 +189,30 @@ jobs:
           -ApiManagementApiValue https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json `
           -ApiManagementApiPolicyFormat rawxml-link `
           -ApiManagementApiPolicyValue ${{ inputs.apim_api_policy_url }}
+
+        popd
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.dockerhub_username }}
+        password: ${{ secrets.dockerhub_token }}
+
+    - name: Build and push Docker images to DockerHub
+      shell: pwsh
+      run: |
+        pushd ${{ env.FUNCTION_APP_PATH }}
+
+        docker build . -t ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
+        docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.environment }}
+
+        $imageId = docker images | grep ${{ env.DOCKER_IMAGE_NAME }} | head -n 1 | awk '{print $3}'
+        if ("${{ inputs.environment }}" -eq "prod") {
+          docker tag $imageId ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+
+          docker tag $imageId ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
+          docker push ${{ secrets.dockerhub_username }}/${{ env.DOCKER_IMAGE_NAME }}:${{ inputs.docker_image_version }}
+        }
 
         popd

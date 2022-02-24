@@ -24,6 +24,7 @@ jobs:
 
   call_functionapp_deploy_dev:
     uses: aliencube/nhn-toast-notification-service-custom-connector/.github/workflows/functionapp-deploy.yaml@main
+    if: github.event_name != 'pull_request'
     needs: call_functionapp_build
     with:
       job_name: 'SMS Verification API to DEV'
@@ -39,8 +40,11 @@ jobs:
       apim_api_path: 'sms/verification'
       apim_api_subscription_required: false
       apim_api_policy_url: 'https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/resources/apim-api-policy-sms-verification.xml'
+      docker_image_version: 'preview'
     secrets:
       azure_credentials: ${{ secrets.AZURE_CREDENTIALS }}
       resource_group_name: '${{ secrets.RESOURCE_GROUP_NAME }}'
       resource_name: '${{ secrets.RESOURCE_NAME }}'
       functionapp_app_settings: '${{ secrets.FUNCTIONAPP_APP_SETTINGS_SMS_VERIFICATION }}'
+      dockerhub_username: '${{ secrets.DOCKERHUB_USERNAME }}'
+      dockerhub_token: '${{ secrets.DOCKERHUB_TOKEN }}'
