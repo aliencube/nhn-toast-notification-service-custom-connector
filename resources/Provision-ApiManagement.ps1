@@ -35,6 +35,25 @@ Param(
     [ValidateSet("dev", "test", "prod")]
     $Environment = "dev",
 
+    ### Storage Account ###
+    [bool]
+    [Parameter(Mandatory=$false)]
+    $ProvisionStorageAccount = $false,
+
+    [string]
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("Standard_GRS", "Standard_LRS", "Standard_ZRS", "Standard_GZRS", "Standard_RAGRS", "Standard_RAGZRS", "Premium_LRS", "Premium_ZRS")]
+    $StorageAccountSku = "Standard_LRS",
+
+    [string[]]
+    [Parameter(Mandatory=$false)]
+    $StorageAccountBlobContainers = @(),
+
+    [string[]]
+    [Parameter(Mandatory=$false)]
+    $StorageAccountTables = @(),
+    ### Storage Account ###
+
     ### Log Analytics ###
     [bool]
     [Parameter(Mandatory=$false)]
@@ -107,6 +126,11 @@ function Show-Usage {
             [-LocationCode <location code>] ``
             [-Environment <environment>] ``
 
+            [-ProvisionStorageAccount <`$true|`$false>] ``
+            [-StorageAccountSku <Storage Account SKU>] ``
+            [-StorageAccountBlobContainers <Storage Account blob containers>] ``
+            [-StorageAccountTables <Storage Account tables>] ``
+
             [-ProvisionLogAnalyticsWorkspace <`$true|`$false>] ``
             [-LogAnalyticsWorkspaceSku <Log Analytics workspace SKU>] ``
 
@@ -137,6 +161,15 @@ function Show-Usage {
                                           Default is empty string.
         -Environment                      environment.
                                           Default is 'dev'.
+
+        -ProvisionStorageAccount          To provision Storage Account or not.
+                                          Default is `$false.
+        -StorageAccountSku                Storage Account SKU.
+                                          Default is 'Standard_LRS'.
+        -StorageAccountBlobContainers     Storage Account blob containers array.
+                                          Default is empty array.
+        -StorageAccountTables             Storage Account tables array.
+                                          Default is empty array.
 
         -ProvisionLogAnalyticsWorkspace   To provision Log Analytics Workspace
                                           or not. Default is `$false.
@@ -197,13 +230,12 @@ if ($ProvisionAppInsights -eq $true) {
 
 # Force the dependencies to be provisioned - API Management
 if ($ProvisionApiMangement -eq $true) {
+    $ProvisionStorageAccount = $true
     $ProvisionAppInsights = $true
     $ProvisionLogAnalyticsWorkspace = $true
 }
 
 # Get global policy from the template
-# $apiManagementPolicyFormat = "rawxml"
-# $apiManagementPolicyValue = (Get-Content -Path "./apim-global-policy.xml" -Raw).Replace("`r", "\r").Replace("`n", "\n").Replace("`"", "\`"")
 $apiManagementPolicyFormat = "rawxml-link"
 $apiManagementPolicyValue = "https://raw.githubusercontent.com/aliencube/nhn-toast-notification-service-custom-connector/main/resources/apim-global-policy.xml"
 
@@ -215,6 +247,11 @@ $params = @{
     location = @{ value = $Location };
     locationCode = @{ value = $LocationCode };
     env = @{ value = $Environment };
+
+    storageAccountToProvision = @{ value = $ProvisionStorageAccount };
+    storageAccountSku = @{ value = $StorageAccountSku };
+    storageAccountBlobContainers = @{ value = $StorageAccountBlobContainers };
+    storageAccountTables = @{ value = $StorageAccountTables };
 
     workspaceToProvision = @{ value = $ProvisionLogAnalyticsWorkspace };
     workspaceSku = @{ value = $LogAnalyticsWorkspaceSku };

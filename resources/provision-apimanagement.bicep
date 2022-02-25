@@ -10,6 +10,22 @@ param locationCode string = ''
 ])
 param env string = 'dev'
 
+// Storage
+param storageAccountToProvision bool = false
+@allowed([
+    'Standard_LRS'
+    'Standard_ZRS'    
+    'Standard_GRS'
+    'Standard_GZRS'
+    'Standard_RAGRS'
+    'Standard_RAGZRS'
+    'Premium_LRS'
+    'Premium_ZRS'
+])
+param storageAccountSku string = 'Standard_LRS'
+param storageAccountBlobContainers array = []
+param storageAccountTables array = []
+
 // Log Analytics Workspace
 param workspaceToProvision bool = false
 @allowed([
@@ -70,6 +86,20 @@ var locationCodeMap = {
     'West US 2': 'wus2'
 }
 var locationCodeResolved = locationCode == '' ? locationCodeMap[locationResolved] : locationCode
+
+module st './storageAccount.bicep' = if (storageAccountToProvision) {
+    name: 'StorageAccount'
+    params: {
+        name: shortName
+        suffix: suffix
+        location: locationResolved
+        locationCode: locationCodeResolved
+        env: env
+        storageAccountSku: storageAccountSku
+        storageAccountBlobContainers: storageAccountBlobContainers
+        storageAccountTables: storageAccountTables
+    }
+}
 
 module wrkspcapimgmt './logAnalyticsWorkspace.bicep' = if (workspaceToProvision) {
     name: 'LogAnalyticsWorkspace'
