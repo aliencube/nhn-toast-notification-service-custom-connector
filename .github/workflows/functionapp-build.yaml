@@ -82,3 +82,26 @@ jobs:
       with:
         name: resources
         path: ${{ env.RESOURCE_PATH }}
+
+    - name: Generate OpenAPI document
+      shell: pwsh
+      env:
+        OpenApi__HostNames: 'https://fncapp-nt-sms-verify-dev-krc.azurewebsites.net/api'
+        AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
+      run: |
+        pushd ${{ env.FUNCTION_APP_PATH }}
+
+        Start-Process -NoNewWindow func @("start","--verbose","false")
+        Start-Sleep -s 60
+
+        Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ./outputs/openapi.json -Force
+
+        Get-Content -Path ./outputs/openapi.json
+
+        popd
+
+    - name: Upload OpenAPI document
+      uses: actions/upload-artifact@v2
+      with:
+        name: openapi
+        path: ${{ env.FUNCTION_APP_PATH }}/outputs

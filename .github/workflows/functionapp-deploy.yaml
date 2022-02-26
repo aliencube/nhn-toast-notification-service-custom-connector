@@ -170,22 +170,11 @@ jobs:
             --value $functionkey
         }
 
-    - name: Generate OpenAPI document
-      shell: pwsh
-      env:
-        OpenApi__HostNames: 'https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api'
-        AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
-      run: |
-        pushd ${{ env.FUNCTION_APP_PATH }}
-
-        Start-Process -NoNewWindow func @("start","--verbose","false")
-        Start-Sleep -s 60
-
-        Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ../outputs/openapi.json -Force
-
-        Get-Content -Path ../outputs/openapi.json
-
-        popd
+    - name: Download OpenAPI document
+      uses: actions/download-artifact@v2
+      with:
+        name: openapi
+        path: outputs
 
     - name: Update API in APIM
       shell: pwsh
@@ -195,7 +184,7 @@ jobs:
         $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() -eq "true" ? $true : $false
 
         $apiFormat = "openapi+json"
-        $apiValue = Get-Content -Path ./outputs/openapi.json | ConvertTo-Json -Compress | ConvertTo-Json
+        $apiValue = Get-Content -Path ../outputs/openapi.json | ConvertTo-Json -Compress | ConvertTo-Json
         # $apiFormat = "openapi+json-link"
         # $apiValue = "https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json"
 
