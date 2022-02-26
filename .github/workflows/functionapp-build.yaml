@@ -98,6 +98,9 @@ jobs:
         pushd ${{ env.FUNCTION_APP_PATH }}
 
         mkdir outputs
+        cp ./local.settings.sample.json ./local.settings.json
+
+        $env:OpenApi_HostNames
 
         ls -al
 
