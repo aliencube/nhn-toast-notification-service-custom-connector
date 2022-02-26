@@ -83,44 +83,44 @@ jobs:
         name: resources
         path: ${{ env.RESOURCE_PATH }}
 
-    - name: Install Azure Functions Core Tools
-      shell: pwsh
-      run: |
-        npm install -g azure-functions-core-tools@4 --unsafe-perm true
+    # - name: Install Azure Functions Core Tools
+    #   shell: pwsh
+    #   run: |
+    #     npm install -g azure-functions-core-tools@4 --unsafe-perm true
 
-    - name: Generate OpenAPI document
-      shell: pwsh
-      env:
-        OpenApi__HostNames: 'https://fncapp-nt-sms-verify-dev-krc.azurewebsites.net/api'
-        OpenApi__Version: 'v3'
-        OpenApi__DocVersion: 'v3.0'
-        Toast__HostName: 'https://api-sms.cloud.toast.com/'
-        Toast__BaseUrl: 'sms/'
-        Toast__ApiVersion: 'v3.0'
-        AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
-        # FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-      run: |
-        cd ${{ env.FUNCTION_APP_PATH }}
+    # - name: Generate OpenAPI document
+    #   shell: pwsh
+    #   env:
+    #     OpenApi__HostNames: 'https://fncapp-nt-sms-verify-dev-krc.azurewebsites.net/api'
+    #     OpenApi__Version: 'v3'
+    #     OpenApi__DocVersion: 'v3.0'
+    #     Toast__HostName: 'https://api-sms.cloud.toast.com/'
+    #     Toast__BaseUrl: 'sms/'
+    #     Toast__ApiVersion: 'v3.0'
+    #     AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
+    #     # FUNCTIONS_WORKER_RUNTIME: 'dotnet'
+    #   run: |
+    #     cd ${{ env.FUNCTION_APP_PATH }}
 
-        mkdir outputs
-        cp ./local.settings.sample.json ./local.settings.json
+    #     mkdir outputs
+    #     cp ./local.settings.sample.json ./local.settings.json
 
-        # dir env:
+    #     # dir env:
 
-        # ls -al
+    #     # ls -al
 
-        Start-Process -NoNewWindow func @("start","--verbose","false")
-        Start-Sleep -s 60
+    #     Start-Process -NoNewWindow func @("start","--verbose","false")
+    #     Start-Sleep -s 60
 
-        # curl http://localhost:7071/api/openapi/v3.json
-        Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ./outputs/openapi.json -Force
+    #     # curl http://localhost:7071/api/openapi/v3.json
+    #     Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ./outputs/openapi.json -Force
 
-        Get-Content -Path ./outputs/openapi.json
+    #     Get-Content -Path ./outputs/openapi.json
 
-        cd ${{ github.workspace }}
+    #     cd ${{ github.workspace }}
 
-    - name: Upload OpenAPI document
-      uses: actions/upload-artifact@v2
-      with:
-        name: openapi
-        path: ${{ env.FUNCTION_APP_PATH }}/outputs
+    # - name: Upload OpenAPI document
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: openapi
+    #     path: ${{ env.FUNCTION_APP_PATH }}/outputs
