@@ -93,8 +93,11 @@ jobs:
       env:
         OpenApi__HostNames: 'https://fncapp-nt-sms-verify-dev-krc.azurewebsites.net/api'
         AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
+        FUNCTIONS_WORKER_RUNTIME: 'dotnet'
       run: |
         pushd ${{ env.FUNCTION_APP_PATH }}
+
+        mkdir outputs
 
         Start-Process -NoNewWindow func @("start","--verbose","false")
         Start-Sleep -s 60
