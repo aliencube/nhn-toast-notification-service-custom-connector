@@ -107,7 +107,8 @@ jobs:
         Start-Process -NoNewWindow func @("start","--language-worker","dotnet","--no-build","true","--verbose","true")
         Start-Sleep -s 60
 
-        Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ./outputs/openapi.json -Force
+        Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json
+        # Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json | ConvertTo-Json -Depth 100 | Out-File -FilePath ./outputs/openapi.json -Force
 
         Get-Content -Path ./outputs/openapi.json
 
