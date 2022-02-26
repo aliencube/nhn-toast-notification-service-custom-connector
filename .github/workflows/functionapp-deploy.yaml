@@ -184,7 +184,7 @@ jobs:
         $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() -eq "true" ? $true : $false
 
         $apiFormat = "openapi+json"
-        $apiValue = Get-Content -Path ../outputs/openapi.json | ConvertTo-Json -Compress | ConvertTo-Json
+        $apiValue = Get-Content -Path ../outputs/openapi.json -Raw | ConvertTo-Json -Compress | ConvertTo-Json
         # $apiFormat = "openapi+json-link"
         # $apiValue = "https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json"
 
