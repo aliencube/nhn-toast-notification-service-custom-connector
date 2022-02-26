@@ -213,15 +213,15 @@ jobs:
             -p location=koreacentral `
             -p locationCode=krc `
             -p env=${{ inputs.environment }} `
-            -p apiMgmtApiName=${{ inputs.apim_api_name }} `
-            -p apiMgmtApiDisplayName=${{ inputs.apim_api_display_name }} `
-            -p apiMgmtApiDescription=${{ inputs.apim_api_description }} `
-            -p apiMgmtApiPath=${{ inputs.apim_api_path }} `
+            -p apiMgmtApiName="${{ inputs.apim_api_name }}" `
+            -p apiMgmtApiDisplayName="${{ inputs.apim_api_display_name }}" `
+            -p apiMgmtApiDescription="${{ inputs.apim_api_description }}" `
+            -p apiMgmtApiPath="${{ inputs.apim_api_path }}" `
             -p apiMgmtSubscriptionRequired=${{ inputs.apim_api_subscription_required }} `
-            -p apiMgmtApiFormat=$apiFormat `
-            -p apiMgmtApiValue=$apiValue `
-            -p apiMgmtApiPolicyFormat=rawxml-link `
-            -p apiMgmtApiPolicyValue=${{ inputs.apim_api_policy_url }}
+            -p apiMgmtApiFormat="$apiFormat" `
+            -p apiMgmtApiValue="$apiValue" `
+            -p apiMgmtApiPolicyFormat="rawxml-link" `
+            -p apiMgmtApiPolicyValue="${{ inputs.apim_api_policy_url }}"
 
         popd
 
