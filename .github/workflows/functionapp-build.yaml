@@ -99,6 +99,8 @@ jobs:
 
         mkdir outputs
 
+        ls -al
+
         Start-Process -NoNewWindow func @("start","--verbose","false")
         Start-Sleep -s 60
 
