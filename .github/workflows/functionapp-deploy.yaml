@@ -185,26 +185,75 @@ jobs:
 
         $apiFormat = "openapi+json"
         $apiValue = Get-Content -Path ../outputs/openapi.json -Raw | ConvertTo-Json -Compress
-        # $apiFormat = "openapi+json-link"
-        # $apiValue = "https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json"
 
-        ./Provision-ApiManagementApi.ps1 `
-          -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `
-          -DeploymentName apim `
-          -GroupName ${{ secrets.resource_group_name }} `
-          -ResourceName ${{ secrets.resource_name }} `
-          -Environment ${{ inputs.environment }} `
-          -ApiManagementApiName ${{ inputs.apim_api_name }} `
-          -ApiManagementApiDisplayName "${{ inputs.apim_api_display_name }}" `
-          -ApiManagementApiDescription "${{ inputs.apim_api_description }}" `
-          -ApiManagementApiPath "${{ inputs.apim_api_path }}" `
-          -ApiManagementApiSubscriptionRequired $subscriptionRequired `
-          -ApiManagementApiFormat $apiFormat `
-          -ApiManagementApiValue $apiValue `
-          -ApiManagementApiPolicyFormat rawxml-link `
-          -ApiManagementApiPolicyValue ${{ inputs.apim_api_policy_url }}
+        $parameters = @{
+          groupName = "${{ secrets.resource_group_name }}";
+          name = "${{ secrets.resource_name }}";
+          location = "";
+          locationCode = "";
+          env = "${{ inputs.environment }}";
+          apiMgmtApiName = "${{ inputs.apim_api_name }}";
+          apiMgmtApiDisplayName = "${{ inputs.apim_api_display_name }}";
+          apiMgmtApiDescription = "${{ inputs.apim_api_description }}";
+          apiMgmtApiPath = "${{ inputs.apim_api_path }}";
+          apiMgmtSubscriptionRequired = $subscriptionRequired;
+          apiMgmtApiFormat = $apiFormat;
+          apiMgmtApiValue = $apiValue;
+          apiMgmtApiPolicyFormat = "rawxml-link";
+          apiMgmtApiPolicyValue = "${{ inputs.apim_api_policy_url }}";
+        }
+        $stringified = $parameters | ConvertTo-Json -Compress | ConvertTo-Json
+
+        az deployment group create `
+            -g ${{ env.RESOURCE_GROUP_NAME }} `
+            -n apim `
+            -f ./provision-apimanagementapi.bicep `
+            -p groupName=${{ secrets.resource_group_name }} `
+            -p name=${{ secrets.resource_name }} `
+            -p location=koreacentral `
+            -p locationCode=krc `
+            -p env=${{ inputs.environment }} `
+            -p apiMgmtApiName=${{ inputs.apim_api_name }} `
+            -p apiMgmtApiDisplayName=${{ inputs.apim_api_display_name }} `
+            -p apiMgmtApiDescription=${{ inputs.apim_api_description }} `
+            -p apiMgmtApiPath=${{ inputs.apim_api_path }} `
+            -p apiMgmtSubscriptionRequired=${{ inputs.apim_api_subscription_required }} `
+            -p apiMgmtApiFormat=$apiFormat `
+            -p apiMgmtApiValue=$apiValue `
+            -p apiMgmtApiPolicyFormat=rawxml-link `
+            -p apiMgmtApiPolicyValue=${{ inputs.apim_api_policy_url }}
 
         popd
+
+    # - name: Update API in APIM
+    #   shell: pwsh
+    #   run: |
+    #     pushd ${{ env.RESOURCE_PATH }}
+
+    #     $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() -eq "true" ? $true : $false
+
+    #     $apiFormat = "openapi+json"
+    #     $apiValue = Get-Content -Path ../outputs/openapi.json -Raw | ConvertTo-Json -Compress
+    #     # $apiFormat = "openapi+json-link"
+    #     # $apiValue = "https://${{ env.FUNCTION_APP_NAME }}.azurewebsites.net/api/openapi/v3.json"
+
+    #     ./Provision-ApiManagementApi.ps1 `
+    #       -ResourceGroupName ${{ env.RESOURCE_GROUP_NAME }} `
+    #       -DeploymentName apim `
+    #       -GroupName ${{ secrets.resource_group_name }} `
+    #       -ResourceName ${{ secrets.resource_name }} `
+    #       -Environment ${{ inputs.environment }} `
+    #       -ApiManagementApiName ${{ inputs.apim_api_name }} `
+    #       -ApiManagementApiDisplayName "${{ inputs.apim_api_display_name }}" `
+    #       -ApiManagementApiDescription "${{ inputs.apim_api_description }}" `
+    #       -ApiManagementApiPath "${{ inputs.apim_api_path }}" `
+    #       -ApiManagementApiSubscriptionRequired $subscriptionRequired `
+    #       -ApiManagementApiFormat $apiFormat `
+    #       -ApiManagementApiValue $apiValue `
+    #       -ApiManagementApiPolicyFormat rawxml-link `
+    #       -ApiManagementApiPolicyValue ${{ inputs.apim_api_policy_url }}
+
+    #     popd
 
     - name: Login to Docker Hub
       uses: docker/login-action@v1
