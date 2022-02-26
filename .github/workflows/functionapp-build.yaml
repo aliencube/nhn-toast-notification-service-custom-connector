@@ -109,7 +109,7 @@ jobs:
 
         # ls -al
 
-        Start-Process -NoNewWindow func @("start","--verbose","false")
+        Start-Process -NoNewWindow func @("start","--language-worker","dotnet","--verbose","false")
         Start-Sleep -s 60
 
         # curl http://localhost:7071/api/openapi/v3.json
