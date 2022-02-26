@@ -83,6 +83,11 @@ jobs:
         name: resources
         path: ${{ env.RESOURCE_PATH }}
 
+    - name: Install Azure Functions Core Tools
+      shell: pwsh
+      run: |
+        npm install -g azure-functions-core-tools@4 --unsafe-perm true
+
     - name: Generate OpenAPI document
       shell: pwsh
       env:
