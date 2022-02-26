@@ -98,18 +98,18 @@ jobs:
         Toast__BaseUrl: 'sms/'
         Toast__ApiVersion: 'v3.0'
         AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
-        FUNCTIONS_WORKER_RUNTIME: 'dotnet'
+        # FUNCTIONS_WORKER_RUNTIME: 'dotnet'
       run: |
         cd ${{ env.FUNCTION_APP_PATH }}
 
         mkdir outputs
-        # cp ./local.settings.sample.json ./local.settings.json
+        cp ./local.settings.sample.json ./local.settings.json
 
         # dir env:
 
         # ls -al
 
-        Start-Process -NoNewWindow func @("start","--language-worker","dotnet","--verbose","false")
+        Start-Process -NoNewWindow func @("start","--verbose","false")
         Start-Sleep -s 60
 
         # curl http://localhost:7071/api/openapi/v3.json
