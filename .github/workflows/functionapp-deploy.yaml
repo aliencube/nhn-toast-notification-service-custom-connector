@@ -198,7 +198,7 @@ jobs:
           apiMgmtApiPath = "${{ inputs.apim_api_path }}";
           apiMgmtSubscriptionRequired = $subscriptionRequired;
           apiMgmtApiFormat = $apiFormat;
-          apiMgmtApiValue = $apiValue;
+          apiMgmtApiValue = "$apiValue";
           apiMgmtApiPolicyFormat = "rawxml-link";
           apiMgmtApiPolicyValue = "${{ inputs.apim_api_policy_url }}";
         }
