@@ -184,7 +184,7 @@ jobs:
         $subscriptionRequired = "${{ inputs.apim_api_subscription_required }}".ToLower() -eq "true" ? $true : $false
 
         $apiFormat = "openapi+json"
-        $apiValue = Get-Content -Path ../outputs/openapi.json -Raw | ConvertTo-Json -Compress
+        $apiValue = Get-Content -Path ../outputs/openapi.json -Raw | ConvertTo-Json -Compress | ConvertTo-Json
 
         $parameters = @{
           groupName = "${{ secrets.resource_group_name }}";
@@ -219,7 +219,7 @@ jobs:
             -p apiMgmtApiPath="${{ inputs.apim_api_path }}" `
             -p apiMgmtApiSubscriptionRequired=${{ inputs.apim_api_subscription_required }} `
             -p apiMgmtApiFormat="$apiFormat" `
-            -p apiMgmtApiValue="$apiValue" `
+            -p apiMgmtApiValue=$apiValue `
             -p apiMgmtApiPolicyFormat="rawxml-link" `
             -p apiMgmtApiPolicyValue="${{ inputs.apim_api_policy_url }}"
 
