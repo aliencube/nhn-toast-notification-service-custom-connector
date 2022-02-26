@@ -93,18 +93,17 @@ jobs:
       env:
         OpenApi__HostNames: 'https://fncapp-nt-sms-verify-dev-krc.azurewebsites.net/api'
         AZURE_FUNCTIONS_ENVIRONMENT: 'Production'
-        FUNCTIONS_WORKER_RUNTIME: 'dotnet'
       run: |
-        pushd ${{ env.FUNCTION_APP_PATH }}
+        cd ${{ env.FUNCTION_APP_PATH }}
 
         mkdir outputs
         cp ./local.settings.sample.json ./local.settings.json
 
-        $env:OpenApi_HostNames
+        dir env:
 
         ls -al
 
-        Start-Process -NoNewWindow func @("start","--language-worker","dotnet")
+        Start-Process -NoNewWindow func @("start","--verbose","false")
         Start-Sleep -s 120
 
         curl http://localhost:7071/api/openapi/v3.json
@@ -112,7 +111,7 @@ jobs:
 
         Get-Content -Path ./outputs/openapi.json
 
-        popd
+        cd ${{ github.workspace }}
 
     - name: Upload OpenAPI document
       uses: actions/upload-artifact@v2
